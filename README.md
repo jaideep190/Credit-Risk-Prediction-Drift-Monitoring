@@ -2,7 +2,7 @@
 
 Predicts whether a loan applicant will default within 2 years, served as a production-style REST API with a live monitoring layer that flags when incoming data starts diverging from the training distribution.
 
-**Live Demo :** [Deployment]()
+**Live Demo :** [Deployment](https://credit-risk-prediction-drift-monitoring-jaideep190.streamlit.app/)
 
 ## Problem Statement
 
