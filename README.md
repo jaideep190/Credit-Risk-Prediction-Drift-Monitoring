@@ -4,6 +4,9 @@ Predicts whether a loan applicant will default within 2 years, served as a produ
 
 **Live Demo :** [Deployment](https://credit-risk-prediction-drift-monitoring-jaideep190.streamlit.app/)
 
+![Dashboard Prediction](images/Dashbaord.png)
+![Dashboard Monitoring](images/drift_monitor.png)
+
 ## Problem Statement
 
 A trained model and a live API are only part of the job. In production, model performance degrades as real-world data drifts from the training distribution, often without any visible signal. This project predicts credit default risk and monitors for that drift using the Population Stability Index (PSI), a standard technique in MLOps and credit risk practice.
