@@ -1,0 +1,11 @@
+model,accuracy,precision,recall,f1,roc_auc
+LightGBM_baseline,0.9353,0.5443,0.196,0.2882,0.8646
+LightGBM_scale_pos_weight,0.8212,0.2341,0.7377,0.3554,0.862
+LightGBM_class_weight_balanced,0.8224,0.2342,0.7297,0.3545,0.8604
+LogisticRegression_balanced,0.8007,0.2159,0.7536,0.3357,0.8589
+RandomForest_baseline,0.9352,0.5447,0.1855,0.2768,0.8502
+RandomForest_balanced,0.9256,0.4328,0.3661,0.3966,0.8467
+LogisticRegression_baseline,0.9354,0.6143,0.0898,0.1567,0.8437
+XGBoost_baseline,0.9339,0.5137,0.2155,0.3036,0.8435
+XGBoost_balanced_sample_weight,0.8518,0.2505,0.611,0.3553,0.8299
+XGBoost_scale_pos_weight,0.8553,0.2519,0.591,0.3532,0.823

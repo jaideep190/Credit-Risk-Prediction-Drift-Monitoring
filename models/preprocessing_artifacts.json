@@ -1,0 +1,12 @@
+{
+  "MonthlyIncome_median": 5400.0,
+  "NumberOfDependents_median": 0.0,
+  "monthly_income_cap": 25000.0,
+  "revolving_utilization_cap": 1.3758156061999982,
+  "debt_ratio_cap": 4983.040000000008,
+  "delinquency_caps": {
+    "NumberOfTime30-59DaysPastDueNotWorse": 13.0,
+    "NumberOfTime60-89DaysPastDueNotWorse": 11.0,
+    "NumberOfTimes90DaysLate": 17.0
+  }
+}

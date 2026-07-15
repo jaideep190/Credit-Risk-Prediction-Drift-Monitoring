@@ -1,6 +1,9 @@
 # Credit Risk Prediction API with Live Drift Monitoring
 
 Predicts whether a loan applicant will default within 2 years, served as a production-style REST API with a live monitoring layer that flags when incoming data starts diverging from the training distribution.
+
+**Live Demo :** [Deployment]()
+
 ## Problem Statement
 
 A trained model and a live API are only part of the job. In production, model performance degrades as real-world data drifts from the training distribution, often without any visible signal. This project predicts credit default risk and monitors for that drift using the Population Stability Index (PSI), a standard technique in MLOps and credit risk practice.

@@ -1,0 +1,407 @@
+{
+  "windows": [
+    "week1_baseline",
+    "week2_baseline",
+    "week3_drift_younger_segment",
+    "week4_drift_income_drop",
+    "week5_drift_utilization_spike"
+  ],
+  "feature_level": [
+    {
+      "window": "week1_baseline",
+      "feature": "RevolvingUtilizationOfUnsecuredLines",
+      "psi": 0.0186,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "age",
+      "psi": 0.0351,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "NumberOfTime30-59DaysPastDueNotWorse",
+      "psi": 0.0008,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "DebtRatio",
+      "psi": 0.0493,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "MonthlyIncome",
+      "psi": 0.0422,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "NumberOfOpenCreditLinesAndLoans",
+      "psi": 0.0693,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "NumberOfTimes90DaysLate",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "NumberRealEstateLoansOrLines",
+      "psi": 0.0044,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "NumberOfTime60-89DaysPastDueNotWorse",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "NumberOfDependents",
+      "psi": 0.0048,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "MonthlyIncome_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week1_baseline",
+      "feature": "NumberOfDependents_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "RevolvingUtilizationOfUnsecuredLines",
+      "psi": 0.0302,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "age",
+      "psi": 0.0553,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "NumberOfTime30-59DaysPastDueNotWorse",
+      "psi": 0.0049,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "DebtRatio",
+      "psi": 0.0948,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "MonthlyIncome",
+      "psi": 0.0073,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "NumberOfOpenCreditLinesAndLoans",
+      "psi": 0.0915,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "NumberOfTimes90DaysLate",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "NumberRealEstateLoansOrLines",
+      "psi": 0.043,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "NumberOfTime60-89DaysPastDueNotWorse",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "NumberOfDependents",
+      "psi": 0.0058,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "MonthlyIncome_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "feature": "NumberOfDependents_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "RevolvingUtilizationOfUnsecuredLines",
+      "psi": 0.0249,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "age",
+      "psi": 0.874,
+      "severity": "significant_drift"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "NumberOfTime30-59DaysPastDueNotWorse",
+      "psi": 0.0029,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "DebtRatio",
+      "psi": 0.0731,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "MonthlyIncome",
+      "psi": 0.076,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "NumberOfOpenCreditLinesAndLoans",
+      "psi": 0.051,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "NumberOfTimes90DaysLate",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "NumberRealEstateLoansOrLines",
+      "psi": 0.0154,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "NumberOfTime60-89DaysPastDueNotWorse",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "NumberOfDependents",
+      "psi": 0.0206,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "MonthlyIncome_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "feature": "NumberOfDependents_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "RevolvingUtilizationOfUnsecuredLines",
+      "psi": 0.0708,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "age",
+      "psi": 0.0473,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "NumberOfTime30-59DaysPastDueNotWorse",
+      "psi": 0.0215,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "DebtRatio",
+      "psi": 0.0874,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "MonthlyIncome",
+      "psi": 2.1544,
+      "severity": "significant_drift"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "NumberOfOpenCreditLinesAndLoans",
+      "psi": 0.0861,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "NumberOfTimes90DaysLate",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "NumberRealEstateLoansOrLines",
+      "psi": 0.0276,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "NumberOfTime60-89DaysPastDueNotWorse",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "NumberOfDependents",
+      "psi": 0.0011,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "MonthlyIncome_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "feature": "NumberOfDependents_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "RevolvingUtilizationOfUnsecuredLines",
+      "psi": 0.51,
+      "severity": "significant_drift"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "age",
+      "psi": 0.0256,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "NumberOfTime30-59DaysPastDueNotWorse",
+      "psi": 0.0168,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "DebtRatio",
+      "psi": 0.0596,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "MonthlyIncome",
+      "psi": 0.0768,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "NumberOfOpenCreditLinesAndLoans",
+      "psi": 0.0702,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "NumberOfTimes90DaysLate",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "NumberRealEstateLoansOrLines",
+      "psi": 0.0211,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "NumberOfTime60-89DaysPastDueNotWorse",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "NumberOfDependents",
+      "psi": 0.0088,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "MonthlyIncome_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "feature": "NumberOfDependents_was_missing",
+      "psi": 0.0,
+      "severity": "stable"
+    }
+  ],
+  "window_summary": [
+    {
+      "window": "week1_baseline",
+      "mean": 0.0187,
+      "max": 0.0693,
+      "overall_severity": "stable"
+    },
+    {
+      "window": "week2_baseline",
+      "mean": 0.0277,
+      "max": 0.0948,
+      "overall_severity": "stable"
+    },
+    {
+      "window": "week3_drift_younger_segment",
+      "mean": 0.0948,
+      "max": 0.874,
+      "overall_severity": "significant_drift"
+    },
+    {
+      "window": "week4_drift_income_drop",
+      "mean": 0.208,
+      "max": 2.1544,
+      "overall_severity": "significant_drift"
+    },
+    {
+      "window": "week5_drift_utilization_spike",
+      "mean": 0.0657,
+      "max": 0.51,
+      "overall_severity": "significant_drift"
+    }
+  ],
+  "thresholds": {
+    "stable_below": 0.1,
+    "significant_at_or_above": 0.25
+  }
+}

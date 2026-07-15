@@ -4,4 +4,5 @@ __pycache__/
 .env
 .venv/
 myenv/
-models/
+models/RandomForest_balanced.pkl
+models/RandomForest_baseline.pkl
