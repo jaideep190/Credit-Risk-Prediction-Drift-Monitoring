@@ -120,7 +120,7 @@ Streamlit dashboard
 
 ## Tech Stack
 
-Python, Pandas, Scikit-learn, XGBoost, LightGBM, SHAP, FastAPI, Docker, Streamlit, Plotly
+Python, Pandas, Scikit-learn, XGBoost, LightGBM, SHAP, FastAPI, Streamlit, Plotly
 
 ## Running Locally
 
