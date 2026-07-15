@@ -12,3 +12,4 @@ pydantic
 streamlit
 requests
 plotly
+shap

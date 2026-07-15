@@ -55,3 +55,12 @@ class PredictionResponse(BaseModel):
     is_high_risk: bool
     decision_threshold: float
     model_name: str
+
+
+class ExplanationResponse(BaseModel):
+    default_probability: float
+    is_high_risk: bool
+    decision_threshold: float
+    model_name: str
+    base_value: float
+    shap_contributions: dict

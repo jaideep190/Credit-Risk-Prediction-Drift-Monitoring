@@ -1,41 +1,121 @@
 """
 Streamlit dashboard for the Credit Risk Prediction API.
 
-Two tabs:
-    1. Predict - a form that calls the live FastAPI /predict endpoint and
-       shows the result with a risk gauge. This is the recruiter-facing
-       demo: no code, no terminal, just fill in a form and click a button.
-    2. Drift Monitoring - reads logged request data and will show PSI
-       drift metrics over simulated time windows. Currently a placeholder
-       until src/drift_monitor.py is built (next step) - showing fabricated
-       drift numbers here would be dishonest, so it stays clearly labeled
-       as not-yet-implemented rather than faked.
+Tabs:
+    1. Predict - custom input OR load a real example from the held-out
+       test set (for people unfamiliar with what realistic values look
+       like). Calls the live /explain endpoint, shows a risk gauge and a
+       SHAP feature contribution chart explaining the prediction.
+    2. Drift Monitoring - placeholder until src/drift_monitor.py exists.
 
 Run:
     streamlit run dashboard/app.py
 
-Requires the FastAPI app to be running separately (default: http://localhost:8000).
+Requires the FastAPI app running separately (default: http://localhost:8000).
 """
 
 import json
 import os
 
+import pandas as pd
 import plotly.graph_objects as go
 import requests
 import streamlit as st
 
-st.set_page_config(page_title="Credit Risk Prediction", layout="wide")
+st.set_page_config(page_title="Credit Risk Prediction", layout="wide", page_icon=None)
 
 DEFAULT_API_URL = os.environ.get("API_URL", "http://localhost:8000")
 LOG_PATH = "logs/requests.jsonl"
+TEST_DATA_PATH = "data/processed/test.csv"
+
+RAW_FEATURE_COLUMNS = [
+    "RevolvingUtilizationOfUnsecuredLines",
+    "age",
+    "NumberOfTime30-59DaysPastDueNotWorse",
+    "DebtRatio",
+    "MonthlyIncome",
+    "NumberOfOpenCreditLinesAndLoans",
+    "NumberOfTimes90DaysLate",
+    "NumberRealEstateLoansOrLines",
+    "NumberOfTime60-89DaysPastDueNotWorse",
+    "NumberOfDependents",
+]
+
+FIELD_KEYS = {
+    "RevolvingUtilizationOfUnsecuredLines": "f_revolving_utilization",
+    "age": "f_age",
+    "NumberOfTime30-59DaysPastDueNotWorse": "f_late_30_59",
+    "DebtRatio": "f_debt_ratio",
+    "MonthlyIncome": "f_monthly_income",
+    "NumberOfOpenCreditLinesAndLoans": "f_open_credit_lines",
+    "NumberOfTimes90DaysLate": "f_late_90",
+    "NumberRealEstateLoansOrLines": "f_real_estate_loans",
+    "NumberOfTime60-89DaysPastDueNotWorse": "f_late_60_89",
+    "NumberOfDependents": "f_dependents",
+}
+
+DEFAULT_VALUES = {
+    "RevolvingUtilizationOfUnsecuredLines": 0.3,
+    "age": 42,
+    "NumberOfTime30-59DaysPastDueNotWorse": 0,
+    "DebtRatio": 0.35,
+    "MonthlyIncome": 5500,
+    "NumberOfOpenCreditLinesAndLoans": 6,
+    "NumberOfTimes90DaysLate": 0,
+    "NumberRealEstateLoansOrLines": 1,
+    "NumberOfTime60-89DaysPastDueNotWorse": 0,
+    "NumberOfDependents": 2,
+}
+
+FEATURE_DISPLAY_NAMES = {
+    "RevolvingUtilizationOfUnsecuredLines": "Credit Utilization",
+    "age": "Age",
+    "NumberOfTime30-59DaysPastDueNotWorse": "Late Payments (30-59 days)",
+    "DebtRatio": "Debt Ratio",
+    "MonthlyIncome": "Monthly Income",
+    "MonthlyIncome_was_missing": "Income Was Unreported",
+    "NumberOfOpenCreditLinesAndLoans": "Open Credit Lines/Loans",
+    "NumberOfTimes90DaysLate": "Late Payments (90+ days)",
+    "NumberRealEstateLoansOrLines": "Real Estate Loans/Lines",
+    "NumberOfTime60-89DaysPastDueNotWorse": "Late Payments (60-89 days)",
+    "NumberOfDependents": "Number of Dependents",
+    "NumberOfDependents_was_missing": "Dependents Was Unreported",
+}
+
+
+@st.cache_data
+def load_test_data():
+    if not os.path.exists(TEST_DATA_PATH):
+        return None
+    return pd.read_csv(TEST_DATA_PATH)
 
 
 def get_api_url() -> str:
     return st.session_state.get("api_url", DEFAULT_API_URL)
 
 
-def call_predict_api(payload: dict, api_url: str) -> dict:
-    response = requests.post(f"{api_url}/predict", json=payload, timeout=10)
+def init_field_state():
+    for col in RAW_FEATURE_COLUMNS:
+        key = FIELD_KEYS[col]
+        if key not in st.session_state:
+            st.session_state[key] = DEFAULT_VALUES[col]
+
+
+def load_example_into_state(row: pd.Series):
+    for col in RAW_FEATURE_COLUMNS:
+        key = FIELD_KEYS[col]
+        value = row[col]
+        if col in ("MonthlyIncome", "NumberOfDependents") and pd.isna(value):
+            value = DEFAULT_VALUES[col]
+        if col in ("age", "NumberOfTime30-59DaysPastDueNotWorse", "NumberOfOpenCreditLinesAndLoans",
+                    "NumberOfTimes90DaysLate", "NumberRealEstateLoansOrLines",
+                    "NumberOfTime60-89DaysPastDueNotWorse"):
+            value = int(value)
+        st.session_state[key] = value
+
+
+def call_api(endpoint: str, payload: dict, api_url: str) -> dict:
+    response = requests.post(f"{api_url}/{endpoint}", json=payload, timeout=10)
     response.raise_for_status()
     return response.json()
 
@@ -63,51 +143,86 @@ def render_risk_gauge(probability: float, threshold: float) -> go.Figure:
             },
         )
     )
-    fig.update_layout(height=300, margin=dict(t=50, b=10, l=20, r=20))
+    fig.update_layout(height=280, margin=dict(t=50, b=10, l=20, r=20))
+    return fig
+
+
+def render_shap_chart(shap_contributions: dict, top_n: int = 8) -> go.Figure:
+    items = sorted(shap_contributions.items(), key=lambda x: abs(x[1]), reverse=True)[:top_n]
+    items = items[::-1]  # largest at top when plotted horizontally
+
+    labels = [FEATURE_DISPLAY_NAMES.get(k, k) for k, _ in items]
+    values = [v for _, v in items]
+    colors = ["#C44E52" if v > 0 else "#55A868" for v in values]
+
+    fig = go.Figure(
+        go.Bar(
+            x=values,
+            y=labels,
+            orientation="h",
+            marker_color=colors,
+            text=[f"{v:+.3f}" for v in values],
+            textposition="outside",
+        )
+    )
+    fig.update_layout(
+        title="What drove this prediction (SHAP contribution, log-odds)",
+        xaxis_title="Contribution to risk score (red = increases risk, green = decreases risk)",
+        height=380,
+        margin=dict(t=50, b=40, l=10, r=10),
+    )
     return fig
 
 
 def predict_tab():
-    st.subheader("Applicant Risk Assessment")
+    init_field_state()
+    test_df = load_test_data()
 
     with st.sidebar:
         st.text_input("API URL", value=DEFAULT_API_URL, key="api_url")
 
-    col1, col2 = st.columns(2)
+    st.subheader("Applicant Risk Assessment")
 
+    mode = st.radio(
+        "Input mode",
+        ["Custom input", "Load example from dataset"],
+        horizontal=True,
+    )
+
+    if mode == "Load example from dataset":
+        if test_df is None:
+            st.warning(f"Could not find {TEST_DATA_PATH}. Run src/preprocess.py first.")
+        else:
+            idx = st.slider("Pick an applicant from the test set", 0, len(test_df) - 1, 0)
+            example_row = test_df.iloc[idx]
+            if st.button("Load this applicant"):
+                load_example_into_state(example_row)
+                st.rerun()
+            actual_label = "Defaulted" if example_row["SeriousDlqin2yrs"] == 1 else "Did not default"
+            st.caption(f"Actual historical outcome for this applicant: **{actual_label}** (ground truth, for comparison only - not shown to the model)")
+
+    st.divider()
+
+    col1, col2 = st.columns(2)
     with col1:
-        revolving_utilization = st.slider(
-            "Revolving Utilization of Unsecured Lines", 0.0, 2.0, 0.3, 0.01,
-            help="Total balance on credit cards/lines divided by credit limits"
-        )
-        age = st.number_input("Age", min_value=18, max_value=110, value=42)
-        late_30_59 = st.number_input("Times 30-59 Days Past Due (last 2 years)", min_value=0, value=0)
-        debt_ratio = st.slider("Debt Ratio", 0.0, 3.0, 0.35, 0.01)
-        monthly_income = st.number_input("Monthly Income ($)", min_value=0, value=5500, step=100)
+        st.slider("Credit Utilization Ratio", 0.0, 2.0, step=0.01, key=FIELD_KEYS["RevolvingUtilizationOfUnsecuredLines"])
+        st.number_input("Age", min_value=18, max_value=110, key=FIELD_KEYS["age"])
+        st.number_input("Late Payments 30-59 Days (last 2 yrs)", min_value=0, key=FIELD_KEYS["NumberOfTime30-59DaysPastDueNotWorse"])
+        st.slider("Debt Ratio", 0.0, 3.0, step=0.01, key=FIELD_KEYS["DebtRatio"])
+        st.number_input("Monthly Income ($)", min_value=0, step=100, key=FIELD_KEYS["MonthlyIncome"])
 
     with col2:
-        open_credit_lines = st.number_input("Number of Open Credit Lines and Loans", min_value=0, value=6)
-        late_90 = st.number_input("Times 90+ Days Late", min_value=0, value=0)
-        real_estate_loans = st.number_input("Number of Real Estate Loans/Lines", min_value=0, value=1)
-        late_60_89 = st.number_input("Times 60-89 Days Past Due (last 2 years)", min_value=0, value=0)
-        dependents = st.number_input("Number of Dependents", min_value=0, value=2)
+        st.number_input("Open Credit Lines / Loans", min_value=0, key=FIELD_KEYS["NumberOfOpenCreditLinesAndLoans"])
+        st.number_input("Late Payments 90+ Days", min_value=0, key=FIELD_KEYS["NumberOfTimes90DaysLate"])
+        st.number_input("Real Estate Loans / Lines", min_value=0, key=FIELD_KEYS["NumberRealEstateLoansOrLines"])
+        st.number_input("Late Payments 60-89 Days (last 2 yrs)", min_value=0, key=FIELD_KEYS["NumberOfTime60-89DaysPastDueNotWorse"])
+        st.number_input("Number of Dependents", min_value=0, key=FIELD_KEYS["NumberOfDependents"])
 
     if st.button("Predict Risk", type="primary"):
-        payload = {
-            "RevolvingUtilizationOfUnsecuredLines": revolving_utilization,
-            "age": age,
-            "NumberOfTime30-59DaysPastDueNotWorse": late_30_59,
-            "DebtRatio": debt_ratio,
-            "MonthlyIncome": monthly_income,
-            "NumberOfOpenCreditLinesAndLoans": open_credit_lines,
-            "NumberOfTimes90DaysLate": late_90,
-            "NumberRealEstateLoansOrLines": real_estate_loans,
-            "NumberOfTime60-89DaysPastDueNotWorse": late_60_89,
-            "NumberOfDependents": dependents,
-        }
+        payload = {col: st.session_state[FIELD_KEYS[col]] for col in RAW_FEATURE_COLUMNS}
 
         try:
-            result = call_predict_api(payload, get_api_url())
+            result = call_api("explain", payload, get_api_url())
         except requests.exceptions.RequestException as e:
             st.error(f"Could not reach the API at {get_api_url()}. Is it running? ({e})")
             return
@@ -116,14 +231,23 @@ def predict_tab():
         threshold = result["decision_threshold"]
         is_high_risk = result["is_high_risk"]
 
-        st.plotly_chart(render_risk_gauge(probability, threshold), use_container_width=True)
+        gauge_col, shap_col = st.columns([1, 1.4])
 
-        if is_high_risk:
-            st.error(f"HIGH RISK - flagged for review (probability {probability:.1%} >= threshold {threshold:.1%})")
-        else:
-            st.success(f"LOW RISK (probability {probability:.1%} < threshold {threshold:.1%})")
+        with gauge_col:
+            st.plotly_chart(render_risk_gauge(probability, threshold), use_container_width=True)
+            if is_high_risk:
+                st.error(f"HIGH RISK - flagged for review\n\n{probability:.1%} >= threshold {threshold:.1%}")
+            else:
+                st.success(f"LOW RISK\n\n{probability:.1%} < threshold {threshold:.1%}")
+            st.caption(f"Model: {result['model_name']}")
 
-        st.caption(f"Model: {result['model_name']} | Decision threshold: {threshold:.4f}")
+        with shap_col:
+            st.plotly_chart(render_shap_chart(result["shap_contributions"]), use_container_width=True)
+            st.caption(
+                "Contributions are in log-odds space (the model's raw score before converting "
+                "to a probability), computed with SHAP TreeExplainer. Positive bars pushed the "
+                "prediction toward higher risk; negative bars pushed it toward lower risk."
+            )
 
 
 def drift_tab():
