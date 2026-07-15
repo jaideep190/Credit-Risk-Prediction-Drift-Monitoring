@@ -6,3 +6,9 @@ lightgbm
 matplotlib
 seaborn
 joblib
+fastapi
+uvicorn[standard]
+pydantic
+streamlit
+requests
+plotly

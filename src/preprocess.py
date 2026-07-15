@@ -19,18 +19,15 @@ Run:
 import argparse
 import json
 import os
+import sys
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-TARGET_COL = "SeriousDlqin2yrs"
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.preprocessing import DELINQUENCY_COLS, SENTINEL_CODES, apply_preprocessing
 
-DELINQUENCY_COLS = [
-    "NumberOfTime30-59DaysPastDueNotWorse",
-    "NumberOfTime60-89DaysPastDueNotWorse",
-    "NumberOfTimes90DaysLate",
-]
-SENTINEL_CODES = [96, 98]
+TARGET_COL = "SeriousDlqin2yrs"
 
 # Percentile choices below are justified by the raw EDA output:
 # - Utilization's tail breaks between the 99.5th and 99.9th percentile
@@ -86,31 +83,6 @@ def fit_preprocessing_artifacts(train_df: pd.DataFrame) -> dict:
     artifacts["delinquency_caps"] = delinquency_caps
 
     return artifacts
-
-
-def apply_preprocessing(df: pd.DataFrame, artifacts: dict) -> pd.DataFrame:
-    """Apply a fitted set of artifacts to any dataframe (train, test, or a live request)."""
-    df = df.copy()
-
-    # Missingness flags, computed before imputation
-    df["MonthlyIncome_was_missing"] = df["MonthlyIncome"].isnull().astype(int)
-    df["NumberOfDependents_was_missing"] = df["NumberOfDependents"].isnull().astype(int)
-
-    df["MonthlyIncome"] = df["MonthlyIncome"].fillna(artifacts["MonthlyIncome_median"])
-    df["NumberOfDependents"] = df["NumberOfDependents"].fillna(artifacts["NumberOfDependents_median"])
-
-    # Percentile-based caps
-    df["MonthlyIncome"] = df["MonthlyIncome"].clip(upper=artifacts["monthly_income_cap"])
-    df["RevolvingUtilizationOfUnsecuredLines"] = df["RevolvingUtilizationOfUnsecuredLines"].clip(
-        upper=artifacts["revolving_utilization_cap"]
-    )
-    df["DebtRatio"] = df["DebtRatio"].clip(upper=artifacts["debt_ratio_cap"])
-
-    # Delinquency sentinel codes capped at each column's own true observed max
-    for col in DELINQUENCY_COLS:
-        df[col] = df[col].clip(upper=artifacts["delinquency_caps"][col])
-
-    return df
 
 
 def main():
