@@ -1,17 +1,16 @@
 # Credit Risk Prediction API with Live Drift Monitoring
 
 Predicts whether a loan applicant will default within 2 years, served as a production-style REST API with a live monitoring layer that flags when incoming data starts diverging from the training distribution.
-
 ## Problem Statement
 
-Most projects stop at "trained a model, built an API." In production, the harder problem is that models silently degrade when the real world drifts away from the training data - and nobody notices until performance craters. This project predicts credit default risk **and** actively monitors for that drift using the Population Stability Index (PSI), a standard technique in real-world MLOps and credit risk teams.
+A trained model and a live API are only part of the job. In production, model performance degrades as real-world data drifts from the training distribution, often without any visible signal. This project predicts credit default risk and monitors for that drift using the Population Stability Index (PSI), a standard technique in MLOps and credit risk practice.
 
-## What's Different Here
+## Key Design Choices
 
-- **Leak-free preprocessing**: every imputation median and outlier cap is computed from the train split only, never the full dataset, and every threshold is derived from raw-data percentiles (not picked by convention).
-- **Honest threshold selection**: the deployed decision threshold is chosen via Youden's J statistic on the ROC curve, with the full precision/recall trade-off shown, not hidden behind one flattering number.
-- **Real drift monitoring**: PSI computed per feature per time window, validated against deliberately-shifted simulated traffic to prove the detector actually discriminates real drift from noise.
-- **Regulatory-style explainability**: per-prediction SHAP contributions, framed the way credit risk actually requires it (adverse action reasoning), not as a business-impact simulator.
+- **Leak-free preprocessing**: Imputation medians and outlier caps are computed from the train split only. All thresholds are derived from raw-data percentiles rather than fixed conventions.
+- **Threshold selection**: The deployed decision threshold is chosen via Youden's J statistic on the ROC curve, with the full precision/recall trade-off reported.
+- **Drift monitoring**: PSI is computed per feature per time window and validated against deliberately shifted simulated traffic to confirm it distinguishes real drift from noise.
+- **Explainability**: Per-prediction SHAP contributions are framed for adverse action reasoning, as required in credit risk, rather than as a general business-impact summary.
 
 ## Dataset
 
